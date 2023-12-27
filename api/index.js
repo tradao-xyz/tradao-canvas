@@ -1,6 +1,6 @@
 const express = require("express");
 const { JSDOM } = require("jsdom");
-const { Canvas, Image } = require("canvas");
+const { Image } = require("canvas");
 const echarts = require("echarts");
 const app = express();
 const { createCanvas } = require("canvas");
@@ -21,7 +21,6 @@ app.post("/image", (req, res) => {
   const width = 920;
   const height = 460;
   const canvas = createCanvas(width, height);
-  const context = canvas.getContext("2d");
 
   echarts.setCanvasCreator(() => canvas);
   const chart = echarts.init(canvas);
@@ -101,7 +100,9 @@ app.post("/image", (req, res) => {
   chart.setOption(option);
   const buffer = canvas.toDataURL();
   res.set("Content-Type", "application/json");
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
   res.send({ data: buffer });
 });
 
-app.listen(3001, () => console.log("Server is running on port 3001"));
+module.exports = app;
+// app.listen(3001, () => console.log("Server is running on port 3001"));
