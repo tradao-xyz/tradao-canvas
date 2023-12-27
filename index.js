@@ -3,7 +3,7 @@ const { JSDOM } = require("jsdom");
 const { Canvas, Image } = require("canvas");
 const echarts = require("echarts");
 const app = express();
-const { createCanvas } = require("canvas");
+const { createCanvas, registerFont } = require("canvas");
 const bodyParser = require("body-parser");
 const dayjs = require("dayjs");
 app.use(bodyParser());
@@ -22,11 +22,12 @@ app.post("/image", (req, res) => {
   const width = 920;
   const height = 460;
   const canvas = createCanvas(width, height);
+  registerFont('./Poppins-Medium.ttf', { family: 'Poppins' })
   const context = canvas.getContext("2d");
+  context.font = "Poppins"
 
   echarts.setCanvasCreator(() => canvas);
   const chart = echarts.init(canvas);
-  console.log("debuger", req.body);
   let data = req.body.data;
   const time = req.body.time;
   const type = req.body.type;
@@ -42,9 +43,9 @@ app.post("/image", (req, res) => {
     .map((i) => {
       return i.value != null
         ? {
-            category: dayjs(i.time * 1000).format(dateFormatter),
-            value: parseFloat(i.value.toFixed(2)),
-          }
+          category: dayjs(i.time * 1000).format(dateFormatter),
+          value: parseFloat(i.value.toFixed(2)),
+        }
         : false;
     })
     .filter(Boolean);
