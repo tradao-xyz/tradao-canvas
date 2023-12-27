@@ -3,6 +3,7 @@ const { JSDOM } = require("jsdom");
 const { Canvas, Image } = require("canvas");
 const echarts = require("echarts");
 const app = express();
+const path = require('path');
 const { createCanvas, registerFont } = require("canvas");
 const bodyParser = require("body-parser");
 const dayjs = require("dayjs");
@@ -22,7 +23,7 @@ app.post("/image", (req, res) => {
   const width = 920;
   const height = 460;
   const canvas = createCanvas(width, height);
-  registerFont('./Poppins-Medium.ttf', { family: 'Poppins' })
+  registerFont(path.join(__dirname, './Poppins-Medium.ttf'), { family: 'Poppins' })
   const context = canvas.getContext("2d");
   context.font = "Poppins"
 
