@@ -1,6 +1,6 @@
 const express = require("express");
 const { JSDOM } = require("jsdom");
-const { Image } = require("canvas");
+const { Canvas, Image } = require("canvas");
 const echarts = require("echarts");
 const app = express();
 const { createCanvas } = require("canvas");
@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const dayjs = require("dayjs");
 app.use(bodyParser());
 
+const port = process.env.PORT || 3001;
 app.post("/image", (req, res) => {
   const dom = new JSDOM(
     `<!DOCTYPE html><body><div id="#main"></div></body></html>`,
@@ -21,10 +22,11 @@ app.post("/image", (req, res) => {
   const width = 920;
   const height = 460;
   const canvas = createCanvas(width, height);
+  const context = canvas.getContext("2d");
 
   echarts.setCanvasCreator(() => canvas);
   const chart = echarts.init(canvas);
-
+  console.log("debuger", req.body);
   let data = req.body.data;
   const time = req.body.time;
   const type = req.body.type;
@@ -40,12 +42,13 @@ app.post("/image", (req, res) => {
     .map((i) => {
       return i.value != null
         ? {
-          category: dayjs(i.time * 1000).format(dateFormatter),
-          value: parseFloat(i.value.toFixed(2)),
-        }
+            category: dayjs(i.time * 1000).format(dateFormatter),
+            value: parseFloat(i.value.toFixed(2)),
+          }
         : false;
     })
     .filter(Boolean);
+
   const option = {
     xAxis: {
       type: "category",
@@ -89,7 +92,6 @@ app.post("/image", (req, res) => {
         itemStyle: { normal: { opacity: 0 } },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-
             { offset: 1, color: "#030304" },
             { offset: 0, color: "#7F50EB" },
           ]),
@@ -100,9 +102,8 @@ app.post("/image", (req, res) => {
   chart.setOption(option);
   const buffer = canvas.toDataURL();
   res.set("Content-Type", "application/json");
-  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
   res.send({ data: buffer });
 });
 
+app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 module.exports = app;
-// app.listen(3001, () => console.log("Server is running on port 3001"));
