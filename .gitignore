@@ -1,0 +1,9 @@
+.DS_Store
+/node_modules
+*.lock
+*.log
+
+/dist
+/.wrangler
+.dev.vars
+.env
