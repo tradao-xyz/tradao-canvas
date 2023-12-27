@@ -23,7 +23,7 @@ app.post("/image", (req, res) => {
   const width = 920;
   const height = 460;
   const canvas = createCanvas(width, height);
-  registerFont(path.join(__dirname, './Poppins-Medium.ttf'), { family: 'Poppins' })
+  registerFont(path.join(process.cwd(), 'Poppins-Medium.ttf'), { family: 'Poppins' })
   const context = canvas.getContext("2d");
   context.font = "Poppins"
 
